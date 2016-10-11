@@ -1,6 +1,11 @@
 # DateIntervalComparator
 
 Compare two DateInterval-Objects with one another.
+
+[![Build Status](https://travis-ci.org/heiglandreas/DateIntervalComparator.svg?branch=master)](https://travis-ci.org/heiglandreas/DateIntervalComparator)
+[![Code Climate](https://codeclimate.com/github/heiglandreas/DateIntervalComparator/badges/gpa.svg)](https://codeclimate.com/github/heiglandreas/DateIntervalComparator)
+[![Coverage Status](https://coveralls.io/repos/github/heiglandreas/DateIntervalComparator/badge.svg?branch=master)](https://coveralls.io/github/heiglandreas/DateIntervalComparator?branch=master)
+
  
 ## Installation
 
