@@ -125,6 +125,5 @@ class DateIntervalComparator
         if ($interval->s > 60) {
             throw new \UnexpectedValueException('Day exceeds value 60');
         }
-
     }
 }
