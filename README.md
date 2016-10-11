@@ -5,6 +5,11 @@ Compare two DateInterval-Objects with one another.
 [![Build Status](https://travis-ci.org/heiglandreas/DateIntervalComparator.svg?branch=master)](https://travis-ci.org/heiglandreas/DateIntervalComparator)
 [![Code Climate](https://codeclimate.com/github/heiglandreas/DateIntervalComparator/badges/gpa.svg)](https://codeclimate.com/github/heiglandreas/DateIntervalComparator)
 [![Coverage Status](https://coveralls.io/repos/github/heiglandreas/DateIntervalComparator/badge.svg?branch=master)](https://coveralls.io/github/heiglandreas/DateIntervalComparator?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/heiglandreas/DateIntervalComparator/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/heiglandreas/DateIntervalComparator/?branch=master)
+
+[![Total Downloads](https://poser.pugx.org/org_heigl/dateintervalcomparator/downloads)](https://packagist.org/packages/org_heigl/dateintervalcomparator)
+[![Latest Stable Version](https://poser.pugx.org/org_heigl/dateintervalcomparator/v/stable)](https://packagist.org/packages/org_heigl/dateintervalcomparator)
+[![License](https://poser.pugx.org/org_heigl/dateintervalcomparator/license)](https://packagist.org/packages/org_heigl/dateintervalcomparator)
 
  
 ## Installation
