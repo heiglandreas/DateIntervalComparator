@@ -32,6 +32,20 @@ comparison-functions in PHP use. When the first value is smaller than the second
 returns -1, if the first is greater than the second it returns 1 and when both are 
 equals it returns 0. The method can therefore be used as callback to sort arrays.
 
+This library assumes that the compared intervals are sensible and alike. 
+Comparing 3 months and 4 days against 5 months and 7 days is what this library is made for.
+It's not been made for comparing 3 months and 4 days against 94 days. 
+Due to the different number of days in a month this comparison will be different 
+depending on the start-date and we do want to compare only the Intervals and not 
+the resulting end-dates!
+
+As long as the values do not exceed their moduli (e.g. a value of 13 for month or 25 for the hour) 
+you are on the safe side.
+
+You can even enforce this safe side by setting ```php $comparator->safe(true)```. 
+That will then throw an exception when one of the values for month, day, hour, 
+minute or second  will exceed the values 12, 31, 24, 60 and 60 resp.
+
 ## Caveat/Limitations
 
 Take care! DateIntervals can be nasty!

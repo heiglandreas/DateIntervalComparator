@@ -28,6 +28,13 @@ namespace Org_Heigl\DateIntervalComparator;
 
 class DateIntervalComparator
 {
+    protected $safe = false;
+
+    public function safe($safe = true)
+    {
+        $this->safe = $safe;
+    }
+
     /**
      * COmpare the two date intervals.
      *
@@ -41,6 +48,11 @@ class DateIntervalComparator
      */
     public function compare(\DateInterval $first, \DateInterval $second)
     {
+        if ($this->safe) {
+            $this->safecheck($first);
+            $this->safecheck($second);
+        }
+
         if ($first->y > $second->y) {
             return 1;
         }
@@ -90,5 +102,29 @@ class DateIntervalComparator
         }
 
         return 0;
+    }
+
+    protected function safecheck(\DateInterval $interval)
+    {
+        if ($interval->m > 12) {
+            throw new \UnexpectedValueException('Month exceeds value 12');
+        }
+
+        if ($interval->d > 31) {
+            throw new \UnexpectedValueException('Day exceeds value 31');
+        }
+
+        if ($interval->h > 24) {
+            throw new \UnexpectedValueException('Hour exceeds value 24');
+        }
+
+        if ($interval->i > 60) {
+            throw new \UnexpectedValueException('Minute exceeds value 60');
+        }
+
+        if ($interval->s > 60) {
+            throw new \UnexpectedValueException('Day exceeds value 60');
+        }
+
     }
 }
