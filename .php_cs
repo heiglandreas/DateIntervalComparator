@@ -1,5 +1,5 @@
 <?php
-$finder = Symfony\CS\Finder\DefaultFinder::create()
+$finder = PhpCsFixer\Finder::create()
     ->in('src')
     ->in('tests')
     ->notPath('_assets')
@@ -8,7 +8,7 @@ $finder = Symfony\CS\Finder\DefaultFinder::create()
             return false;
         }
     });
-$config = Symfony\CS\Config\Config::create();
-$config->level(Symfony\CS\FixerInterface::PSR2_LEVEL);
-$config->finder($finder);
+$config = PhpCsFixer\Config::create();
+$config->setRules(['@PSR2' => true]);
+$config->setFinder($finder);
 return $config;

@@ -26,9 +26,10 @@
 
 namespace Org_Heigl\DateIntervalComparatorTest;
 
+use PHPUnit\Framework\TestCase;
 use Org_Heigl\DateIntervalComparator\DateIntervalComparator;
 
-class DateIntervalComparatorTest extends \PHPUnit_Framework_TestCase
+class DateIntervalComparatorTest extends TestCase
 {
     public function testThatDifferentYearsResolveCorrect()
     {
