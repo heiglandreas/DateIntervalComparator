@@ -22,7 +22,7 @@ DateIntervalComparator is best installed using [composer](https://getcomposer.or
 ## Usage
 
 ```php
-$comparator = new Org_Heigl\DateIntervalComparator\DateIntervalCompoarator()
+$comparator = new Org_Heigl\DateIntervalComparator\DateIntervalComparator()
 echo $comparator->compare(new Dateinterval('P1Y'), new DateInterval('P1M'));
 // 1
 ```
