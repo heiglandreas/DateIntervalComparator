@@ -62,6 +62,15 @@ class DateIntervalComparator
             $this->safecheck($second);
         }
 
+        if (0 !== $datePart = $this->compareDatePart($first, $second)) {
+            return $datePart;
+        }
+
+        return $this->compareTimePart($first, $second);
+    }
+
+    private function compareDatePart(DateInterval $first, DateInterval $second): int
+    {
         if (0 !== $year = $this->compareValue($first->y, $second->y)) {
             return $year;
         }
@@ -74,6 +83,11 @@ class DateIntervalComparator
             return $day;
         }
 
+        return 0;
+    }
+
+    private function compareTimePart(DateInterval $first, DateInterval $second): int
+    {
         if (0 !== $hour = $this->compareValue($first->h, $second->h)) {
             return $hour;
         }
