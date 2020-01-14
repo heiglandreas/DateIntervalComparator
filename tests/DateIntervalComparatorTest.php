@@ -26,8 +26,11 @@
 
 namespace Org_Heigl\DateIntervalComparatorTest;
 
+use DateInterval;
+use phpDocumentor\Reflection\Types\Void_;
 use PHPUnit\Framework\TestCase;
 use Org_Heigl\DateIntervalComparator\DateIntervalComparator;
+use UnexpectedValueException;
 
 class DateIntervalComparatorTest extends TestCase
 {
@@ -95,6 +98,31 @@ class DateIntervalComparatorTest extends TestCase
             [(new \DateTime('2016-02-28 12:00:00'))->diff(new \DateTime('2016-03-01 12:00:00')), new \DateInterval('P2D'), 0],
             [(new \DateTime('2015-02-28 12:00:00'))->diff(new \DateTime('2015-03-01 12:00:00')), new \DateInterval('P2D'), -1],
             [(new \DateTime('2015-02-28 12:00:00'))->diff(new \DateTime('2015-03-01 12:00:00')), new \DateInterval('P1D'), 0],
+        ];
+    }
+
+    /** @dataProvider safeDiffThrower */
+    public function testThatSafeDiffThrowsOnInvalidData($first, $second): void
+    {
+        $comparator = new DateIntervalComparator();
+        $comparator->safe(true);
+        self::expectException(UnexpectedValueException::class);
+        $comparator->compare($first, $second);
+    }
+
+    public function safeDiffThrower(): array
+    {
+        return [
+            [new DateInterval('P12M'), new DateInterval('P13M')],
+            [new DateInterval('P13M'), new DateInterval('P12M')],
+            [new DateInterval('P32D'), new DateInterval('P31D')],
+            [new DateInterval('P31D'), new DateInterval('P32D')],
+            [new DateInterval('PT25H'), new DateInterval('PT26H')],
+            [new DateInterval('PT26H'), new DateInterval('PT25H')],
+            [new DateInterval('PT60M'), new DateInterval('PT61M')],
+            [new DateInterval('PT61M'), new DateInterval('PT60M')],
+            [new DateInterval('PT61S'), new DateInterval('PT62S')],
+            [new DateInterval('PT62S'), new DateInterval('PT61S')],
         ];
     }
 }

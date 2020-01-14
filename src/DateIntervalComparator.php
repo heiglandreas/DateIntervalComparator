@@ -26,11 +26,20 @@
 
 namespace Org_Heigl\DateIntervalComparator;
 
+use DateInterval;
+use UnexpectedValueException;
+
 class DateIntervalComparator
 {
-    protected $safe = false;
+    private $safe = false;
 
-    public function safe($safe = true)
+    public function __construct(bool $safe = false)
+    {
+        $this->safe = $safe;
+    }
+
+    /** @deprecated Use the constructor injected safety flag */
+    public function safe($safe = true): void
     {
         $this->safe = $safe;
     }
@@ -41,89 +50,80 @@ class DateIntervalComparator
      * If the first contains a larger timespan we return 1, if the second contains more
      * we return -1 and when they are equals we return 0.
      *
-     * @param \DateInterval $first
-     * @param \DateInterval $second
+     * @param DateInterval $first
+     * @param DateInterval $second
      *
      * @return int
      */
-    public function compare(\DateInterval $first, \DateInterval $second)
+    public function compare(DateInterval $first, DateInterval $second): int
     {
         if ($this->safe) {
             $this->safecheck($first);
             $this->safecheck($second);
         }
 
-        if ($first->y > $second->y) {
-            return 1;
+        if (0 !== $year = $this->compareValue($first->y, $second->y)) {
+            return $year;
         }
 
-        if ($first->y < $second->y) {
-            return -1;
+        if (0 !== $month = $this->compareValue($first->m, $second->m)) {
+            return $month;
         }
 
-        if ($first->m > $second->m) {
-            return 1;
+        if (0 !== $day = $this->compareValue($first->d, $second->d)) {
+            return $day;
         }
 
-        if ($first->m < $second->m) {
-            return -1;
+        if (0 !== $hour = $this->compareValue($first->h, $second->h)) {
+            return $hour;
         }
 
-        if ($first->d > $second->d) {
-            return 1;
+        if (0 !== $minute = $this->compareValue($first->i, $second->i)) {
+            return $minute;
         }
 
-        if ($first->d < $second->d) {
-            return -1;
-        }
-
-        if ($first->h > $second->h) {
-            return 1;
-        }
-
-        if ($first->h < $second->h) {
-            return -1;
-        }
-
-        if ($first->i > $second->i) {
-            return 1;
-        }
-
-        if ($first->i < $second->i) {
-            return -1;
-        }
-
-        if ($first->s > $second->s) {
-            return 1;
-        }
-
-        if ($first->s < $second->s) {
-            return -1;
+        if (0 !== $second = $this->compareValue($first->s, $second->s)) {
+            return $second;
         }
 
         return 0;
     }
 
-    protected function safecheck(\DateInterval $interval)
+    private function compareValue(int $a, int $b): int
+    {
+        if ($a < $b) {
+            return -1;
+        }
+
+        if ($a > $b) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    private function safecheck(DateInterval $interval): void
     {
         if ($interval->m > 12) {
-            throw new \UnexpectedValueException('Month exceeds value 12');
+            throw new UnexpectedValueException('Month exceeds value 12');
         }
 
         if ($interval->d > 31) {
-            throw new \UnexpectedValueException('Day exceeds value 31');
+            throw new UnexpectedValueException('Day exceeds value 31');
         }
 
-        if ($interval->h > 24) {
-            throw new \UnexpectedValueException('Hour exceeds value 24');
+        // 25 due to DST-Transitions
+        if ($interval->h > 25) {
+            throw new UnexpectedValueException('Hour exceeds value 25');
         }
 
         if ($interval->i > 60) {
-            throw new \UnexpectedValueException('Minute exceeds value 60');
+            throw new UnexpectedValueException('Minute exceeds value 60');
         }
 
-        if ($interval->s > 60) {
-            throw new \UnexpectedValueException('Day exceeds value 60');
+        // 61 due to leap-seconds
+        if ($interval->s > 61) {
+            throw new UnexpectedValueException('Second exceeds value 61');
         }
     }
 }
