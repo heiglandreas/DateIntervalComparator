@@ -22,7 +22,7 @@ DateIntervalComparator is best installed using [composer](https://getcomposer.or
 ## Usage
 
 ```php
-$comparator = new Org_Heigl\DateIntervalComparator\DateIntervalCompoarator()
+$comparator = new Org_Heigl\DateIntervalComparator\DateIntervalComparator()
 echo $comparator->compare(new Dateinterval('P1Y'), new DateInterval('P1M'));
 // 1
 ```
@@ -53,7 +53,7 @@ Take care! DateIntervals can be nasty!
 Due to their nature DateIntervals do *not* take Date or Time into account! So
 ```DateInterval('P1M')``` might or might not be the same as ```DateInterval('P30D')```!
 This Library will compare on a "same entity"-level. So first years are compared, 
-then months, then weeks and so on. Whewn you have an interval that is descibing only 55 weeks
+then months, then weeks and so on. When you have an interval that is describing only 55 weeks
 and compare that to one that is only describing one year, the one year will be considered greater 
 even though 55 weeks are more. So you should only compare comparable intervals! 
 
