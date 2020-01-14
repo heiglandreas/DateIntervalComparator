@@ -19,7 +19,7 @@ before_install:
     return 0 ; fi
   - composer self-update
   - if [[ $EXECUTE_TEST_COVERALLS == 'true' ]]; then composer require --dev --no-update
-    satooshi/php-coveralls ; fi
+    php-coveralls/php-coveralls ; fi
   - if [[ $EXECUTE_CS_CHECK == 'true' ]]; then composer require --dev --no-update
     friendsofphp/php-cs-fixer ; fi
 install:
@@ -31,5 +31,5 @@ script:
     fi
   - if [[ $EXECUTE_CS_CHECK == 'true' ]]; then ./vendor/bin/php-cs-fixer fix -v --diff
     --dry-run ; fi
-after_script:
-  - if [[ $EXECUTE_TEST_COVERALLS == 'true' ]]; then ./vendor/bin/coveralls ; fi
+after_success:
+  - if [[ $EXECUTE_TEST_COVERALLS == 'true' ]]; then travis_retry php ./vendor/bin/php-coveralls -v ; fi
