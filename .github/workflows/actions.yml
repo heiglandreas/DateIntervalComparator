@@ -1,0 +1,117 @@
+name: Build
+on:
+  pull_request:
+  push:
+    branches:
+      - 'master'
+permissions: {}
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+    cancel-in-progress: true
+jobs:
+  check:
+    name: Check Codestyle
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # 7.0.1
+        with:
+          persist-credentials: false
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: "8.5"
+          tools: phive
+      - name: Install codesniffer
+        run: |
+            cd tools/phpcs
+            composer install
+            cd ../..
+      - name: Install
+        run: composer install
+      - name: check
+        run: ./tools/phpcs/vendor/bin/phpcs
+  test:
+    needs: [check]
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      matrix:
+        php-versions: ['7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
+        experimental: [false]
+        include:
+          - php-versions: '8.6'
+            experimental: true
+
+    name: "Test on PHP ${{ matrix.php-versions }}"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # 7.0.1
+        with:
+          persist-credentials: false
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: sodium
+          ini-values: post_max_size=256M, short_open_tag=On
+          coverage: xdebug
+      - name: prepare
+        run: composer update
+      - name: Install PHPUnit
+        run: composer require --dev phpunit/phpunit
+      - name: test
+        run: composer test
+  analyze:
+    name: Run static analysis
+    needs: test
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # 7.0.1
+        with:
+          persist-credentials: false
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: "8.4"
+      - name: Download phpstan
+        run: |
+            composer require phpstan/phpstan
+      - name: install
+        run: composer update --no-dev
+      - name: analyze
+        run: ./vendor/bin/phpstan
+  coverage:
+    name: Create code-coverage
+    needs: test
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # 7.0.1
+        with:
+          persist-credentials: false
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: "8.4"
+          coverage: xdebug
+      - name: Install
+        run: composer update
+      - name: Install PHPUnit
+        run: composer require --dev phpunit/phpunit
+      - name: run testsuite
+        run: composer test-coverage
+      - name: upload to coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          composer global require php-coveralls/php-coveralls
+          php-coveralls --coverage_clover=clover.xml -v
+      - name: upload to codecov
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # 7.0.0
+        with:
+          files: ./clover.xml
