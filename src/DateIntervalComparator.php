@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) Andreas Heigl<andreas@heigl.org>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,113 +34,115 @@ use UnexpectedValueException;
 
 class DateIntervalComparator
 {
-    private $safe = false;
+	/** @var bool */
+	// phpstan-ignore-next-line missingType.parameter Can't be declared in code due to PHP7.1 compatibility
+	private $safe = false;
 
-    public function __construct(bool $safe = false)
-    {
-        $this->safe = $safe;
-    }
+	public function __construct(bool $safe = false)
+	{
+		$this->safe = $safe;
+	}
 
-    /** @deprecated Use the constructor injected safety flag */
-    public function safe($safe = true): void
-    {
-        $this->safe = $safe;
-    }
+	/** @deprecated Use the constructor injected safety flag */
+	public function safe(bool $safe = true): void
+	{
+		$this->safe = $safe;
+	}
 
-    /**
-     * COmpare the two date intervals.
-     *
-     * If the first contains a larger timespan we return 1, if the second contains more
-     * we return -1 and when they are equals we return 0.
-     *
-     * @param DateInterval $first
-     * @param DateInterval $second
-     *
-     * @return int
-     */
-    public function compare(DateInterval $first, DateInterval $second): int
-    {
-        if ($this->safe) {
-            $this->safecheck($first);
-            $this->safecheck($second);
-        }
+	/**
+	 * COmpare the two date intervals.
+	 *
+	 * If the first contains a larger timespan we return 1, if the second contains more
+	 * we return -1 and when they are equals we return 0.
+	 *
+	 * @param DateInterval $first
+	 * @param DateInterval $second
+	 *
+	 * @return int
+	 */
+	public function compare(DateInterval $first, DateInterval $second): int
+	{
+		if ($this->safe) {
+			$this->safecheck($first);
+			$this->safecheck($second);
+		}
 
-        if (0 !== $datePart = $this->compareDatePart($first, $second)) {
-            return $datePart;
-        }
+		if (0 !== $datePart = $this->compareDatePart($first, $second)) {
+			return $datePart;
+		}
 
-        return $this->compareTimePart($first, $second);
-    }
+		return $this->compareTimePart($first, $second);
+	}
 
-    private function compareDatePart(DateInterval $first, DateInterval $second): int
-    {
-        if (0 !== $year = $this->compareValue($first->y, $second->y)) {
-            return $year;
-        }
+	private function compareDatePart(DateInterval $first, DateInterval $second): int
+	{
+		if (0 !== $year = $this->compareValue($first->y, $second->y)) {
+			return $year;
+		}
 
-        if (0 !== $month = $this->compareValue($first->m, $second->m)) {
-            return $month;
-        }
+		if (0 !== $month = $this->compareValue($first->m, $second->m)) {
+			return $month;
+		}
 
-        if (0 !== $day = $this->compareValue($first->d, $second->d)) {
-            return $day;
-        }
+		if (0 !== $day = $this->compareValue($first->d, $second->d)) {
+			return $day;
+		}
 
-        return 0;
-    }
+		return 0;
+	}
 
-    private function compareTimePart(DateInterval $first, DateInterval $second): int
-    {
-        if (0 !== $hour = $this->compareValue($first->h, $second->h)) {
-            return $hour;
-        }
+	private function compareTimePart(DateInterval $first, DateInterval $second): int
+	{
+		if (0 !== $hour = $this->compareValue($first->h, $second->h)) {
+			return $hour;
+		}
 
-        if (0 !== $minute = $this->compareValue($first->i, $second->i)) {
-            return $minute;
-        }
+		if (0 !== $minute = $this->compareValue($first->i, $second->i)) {
+			return $minute;
+		}
 
-        if (0 !== $second = $this->compareValue($first->s, $second->s)) {
-            return $second;
-        }
+		if (0 !== $second = $this->compareValue($first->s, $second->s)) {
+			return $second;
+		}
 
-        return 0;
-    }
+		return 0;
+	}
 
-    private function compareValue(int $a, int $b): int
-    {
-        if ($a < $b) {
-            return -1;
-        }
+	private function compareValue(int $a, int $b): int
+	{
+		if ($a < $b) {
+			return -1;
+		}
 
-        if ($a > $b) {
-            return 1;
-        }
+		if ($a > $b) {
+			return 1;
+		}
 
-        return 0;
-    }
+		return 0;
+	}
 
-    private function safecheck(DateInterval $interval): void
-    {
-        if ($interval->m > 12) {
-            throw new UnexpectedValueException('Month exceeds value 12');
-        }
+	private function safecheck(DateInterval $interval): void
+	{
+		if ($interval->m > 12) {
+			throw new UnexpectedValueException('Month exceeds value 12');
+		}
 
-        if ($interval->d > 31) {
-            throw new UnexpectedValueException('Day exceeds value 31');
-        }
+		if ($interval->d > 31) {
+			throw new UnexpectedValueException('Day exceeds value 31');
+		}
 
-        // 25 due to DST-Transitions
-        if ($interval->h > 25) {
-            throw new UnexpectedValueException('Hour exceeds value 25');
-        }
+		// 25 due to DST-Transitions
+		if ($interval->h > 25) {
+			throw new UnexpectedValueException('Hour exceeds value 25');
+		}
 
-        if ($interval->i > 60) {
-            throw new UnexpectedValueException('Minute exceeds value 60');
-        }
+		if ($interval->i > 60) {
+			throw new UnexpectedValueException('Minute exceeds value 60');
+		}
 
-        // 61 due to leap-seconds
-        if ($interval->s > 61) {
-            throw new UnexpectedValueException('Second exceeds value 61');
-        }
-    }
+		// 61 due to leap-seconds
+		if ($interval->s > 61) {
+			throw new UnexpectedValueException('Second exceeds value 61');
+		}
+	}
 }
